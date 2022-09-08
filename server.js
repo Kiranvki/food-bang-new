@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
-const assert = require('assert')
+
 const helmet = require("helmet")
 require('dotenv').config()
 require('express-async-error')
