@@ -1,0 +1,45 @@
+const mongoose=require('mongoose')
+const Order=new mongoose.Schema({
+    orderId:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    userId:{
+        type:mongoose.Schema.ObjectId,
+        ref:'Auth',
+        required:true
+    },
+    address:{
+        type:Object,
+        required:true
+    },
+    cart:{
+        type:Array,
+        default:[]
+    },
+    payment_id:{
+        type:String
+    },
+    paymentMode:{
+        type:String,
+        required:true
+    },
+    paymentStatus:{
+        type:String,
+        default:"unpaid"
+    },
+    finalTotal:{
+        type:Number,
+        required:true
+    },
+    orderStatus:{
+        type:String,
+        default:"process"
+    }
+},{
+    collection:"orders",
+    timestamps:true
+})
+
+module.exports=mongoose.model("Orders",Order)
