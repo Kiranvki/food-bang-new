@@ -28,7 +28,15 @@ app.use(cors())
 app.use(cookieParser(process.env.REF_TOKEN_SECRET))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(helmet())
+
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        imgSrc: ["'self'", '*.cloudinary.com', '*.google.com']
+    }
+})
+)
+
+
 app.use(fileUpload({
     useTempFiles: true
 }))
@@ -50,18 +58,15 @@ const connectDb = require('./db')
 //---------Deployment-------//
 
 
-if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
-    app.use(express.static('client/build'));
-    app.use("*", (req, res) => {
-        res.sendFile(path.join(__dirname + `/client/build/index.html`))
+__dirname = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, './client/build')));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../client/build/index.html"))
     })
 }
-
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 
 const start = async () => {
