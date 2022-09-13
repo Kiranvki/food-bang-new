@@ -31,11 +31,12 @@ app.use(express.json())
 
 app.use(helmet.contentSecurityPolicy({
     directives: {
-        imgSrc: ["'self'", '*.cloudinary.com', '*.google.com']
+        imgSrc: ["'self'", '*.cloudinary.com', '*.google.com'],
+      
+
     }
 })
 )
-
 
 app.use(fileUpload({
     useTempFiles: true
@@ -54,9 +55,7 @@ const PORT = process.env.PORT || 5000
 
 const connectDb = require('./db')
 
-
 //---------Deployment-------//
-
 
 __dirname = path.resolve();
 

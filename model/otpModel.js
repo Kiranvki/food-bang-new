@@ -8,6 +8,7 @@ const otpModel = new mongoose.Schema({
     },
     code: {
         type: Number,
+        required: true,
     },
     expireIn: {
         type: Number,

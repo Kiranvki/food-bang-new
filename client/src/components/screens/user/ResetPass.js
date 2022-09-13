@@ -34,6 +34,7 @@ function ResetPass() {
         const user = {
             email: email.current.value,
         };
+        
         try {
             let url = 'http://localhost:5000/api/v1/auth/send-email'
             let options = {
@@ -81,7 +82,7 @@ function ResetPass() {
                                     <Box>
                                         <img src="https://res.cloudinary.com/dkz3uzlnp/image/upload/v1662548449/food-bang/177-envelope-mail-send-gradient_uh5v6b.gif" alt="" />
                                     </Box> */}
-                                    <PasswordForm />
+                                    <PasswordForm email={email.current.value} />
                                 </>
                                 )
                         }

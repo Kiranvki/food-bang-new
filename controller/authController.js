@@ -28,7 +28,7 @@ const authController = {
             let subject = "Food Bang - New User Registration";
             let content = `<div>
             <h1>Hello, ${name} Welcome to Food Bang Application.</h1>
-            <h5>Your mail is = ${email} is successfully Registered with Food-Bang.. your Password is = ${password} </h5>
+            <h5>Your mail Id is = ${email} is successfully Registered with Food-Bang.. your Password is = ${password} </h5>
             <p>Enjoy our services with Food-Bang Team..</p>
             </div>`;
 
@@ -94,71 +94,55 @@ const authController = {
             return res.status(500).json({ msg: err.message })
         }
     },
-    resetPassword: async (req, res) => {
-        try {
-            // let { email, password } = req.body;
-            // let extUser = await Auth.findOne({ email })
-            // if (!extUser)
-            //     return res.status(400).json({ msg: "user doesn`t exist" })
-            // let data = await Otp.find({ email: email, code: req.body.otpCode })
-            // let currentTime = new Date().getTime();
-            // let diff = data.expireIn - currentTime;
-
-            // if (diff < 0) {
-            //     return res.status(400).json({ msg: "Token Expired" })
-            // } else {
-            //     let newPass = becrypt.hash(password, 10);
-            //     await Auth.findByIdAndUpdate({ id: extUser._id }, {
-            //         password: newPass
-            //     });
-            //     extUser.save()
-            //     return res.status(200).json({ msg: "password updated succesfully." });
-            // }
-
-            let data = await Otp.find({ email: req.body.email, code: req.body.code });
-            if (data) {
-                let currentTime = new Date().getTime();
-                let diff = data.expireIn - currentTime;
-                if (diff < 0) {
-                    return res.status(400).json({ msg: "Token Expired" })
-                } else {
-                    let { password } = req.body;
-                    let newPass = await bcrypt.hash(password, 10);
-                    // console.log(password);
-                    console.log(newPass)
-                    let user = await Auth.findOne({ email: req.body.email })
-                    user.password = newPass,
-
-                        await user.save();
-                    return res.status(200).json({ msg: "password updated successfully." });
-                }
-            } else {
-                return res.status(400).json({ msg: "Invalid OTP." });
-            }
-        } catch (err) {
-            return res.status(500).json({ msg: err.message })
-        }
-    },
     sendMail: async (req, res) => {
         try {
-            let { email } = req.body;
+            let { email, code } = req.body;
             let extUser = await Auth.findOne({ email })
             const responseType = {}
             if (!extUser)
                 return res.status(400).json({ msg: "user doesn`t exist" })
             let otpCode = Math.floor((Math.random() * 10000) + 1)
             let otpData = new Otp({
-                email: email,
+                email: req.body.email,
                 code: otpCode,
                 expireIn: new Date().getTime() + 300 * 1000
             })
-            let otpResponse = await otpData.save()
+            let otpResponse = await otpData.save();
+            let subject = "Your Password Reset";
+            let content = `<div>
+                        <h1>Hello, ${email} Welcome to Food Bang Application.</h1>
+                        <h3>Your Password change OTP is,${otpData.code} </h3>
+                        <h4>Enjoy our services with Food-Bang Team..
+                        </h4>
+                        
+                        </div>`;
+            let mailResp = sendMail(email, subject, content, otpData);
             responseType.statusText = 'Success'
             responseType.message = "Please Check your mail"
-            res.status(200).json({ msg: responseType });
+            res.status(200).json({ msg: responseType, output: mailResp });
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
+    },
+    resetPassword: async (req, res) => {
+        let data = await Otp.findOne({ email: req.body.email, code: req.body.otpCode });
+        if (data) {
+            let currentTime = new Date().getTime();
+            let diff = data.expireIn - currentTime;
+            if (diff < 0) {
+                res.status(400).json({ msg: "Token Expired" })
+            } else {
+                let { password } = req.body;
+                let newPass = await bcrypt.hash(password, 10);
+                let user = await Auth.findOne({ email: req.body.email })
+                password = newPass,
+                    await user.save();
+                res.status(200).json({ msg: "password updated successfully." });
+            }
+        } else {
+            res.status(400).json({ msg: "Invalid OTP." });
+        }
+
     },
     getUserInfo: async (req, res) => {
         try {

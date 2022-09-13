@@ -61,6 +61,75 @@ function a11yProps(index) {
 }
 
 function LogIn() {
+    //try//
+    const [values, setValues] = useState({
+        email: '',
+        password: '',
+
+    })
+
+    const [validations, setValidations] = useState({
+        email: '',
+        password: '',
+
+    })
+
+
+    const validateAll = () => {
+        const { email, password } = values
+        const validations = { email: '', password: '' }
+        let isValid = true
+
+
+        if (!email) {
+            validations.email = 'Email is required'
+            isValid = false
+        }
+
+        if (email && !/\S+@\S+\.\S+/.test(email)) {
+            validations.email = 'Email format must be as example@mail.com'
+            isValid = false
+        }
+
+        if (!password) {
+            validations.password = 'Password is required'
+            isValid = false
+        }
+
+        if (password && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+            validations.password = 'Minimum eight characters, at least one letter and one number'
+            isValid = false
+        }
+
+        if (!isValid) {
+            setValidations(validations)
+        }
+        return isValid
+    }
+
+    const validateOne = (e) => {
+        const { name } = e.target
+        const value = values[name]
+        let message = ''
+
+
+        if (value && name === 'email' && !/\S+@\S+\.\S+/.test(value)) {
+            message = 'Email format must be as example@mail.com'
+        }
+
+        if ((value && name === 'password' && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value))) {
+            message = 'Minimum eight characters, at least one letter and one number'
+
+        }
+        setValidations({ ...validations, [name]: message })
+    }
+
+    const pathHandler = (e) => {
+        const { name, value } = e.target
+        setValues({ ...values, [name]: value })
+    }
+
+    //try end//
 
     const [value, setValue] = useState(0);
 
@@ -76,46 +145,48 @@ function LogIn() {
         }
     }
 
-    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
-    const IsEmail = value => emailRegex.test(value);
-
-    const {
-        value: enteredEmail,
-        isValid: emailIsValid,
-        hasError: emailHasError,
-        valueChangeHandler: emailChangeHandler,
-        valueBlurHandler: emailBlurHandler,
-
-    } = useInput(IsEmail);
-
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const email = useRef()
-    const password = useRef()
 
     const navigate = useNavigate()
 
     const submitHandler = async (e) => {
         e.preventDefault()
 
+        const isValid = validateAll()
+
+        if (!isValid) {
+            return false
+        }
+
         const user = {
-            email: email.current.value,
-            password: password.current.value
-        };
-        try {
-            await axios.post(`/api/v1/auth/login`, user).then(res => {
-                toast.success('user logged Successfully');
-                localStorage.setItem('loginToken', true);
-                navigate('/')
-                window.location.reload();
-            }).catch(err => toast.error(err.response.data.msg))
-        } catch (error) {
-            toast.error(error.response.user.msg)
+            email: values.email,
+            password: values.password,
+        }
+
+        if (user.email !== '' || user.password !== '') {
+            try {
+                await axios.post(`/api/v1/auth/login`, user).then(res => {
+                    toast.success('user logged Successfully');
+                    localStorage.setItem('loginToken', true);
+                    navigate('/')
+                    window.location.reload();
+                }).catch(err => toast.error(err.response.data.msg))
+            } catch (error) {
+                toast.error(error.response.user.msg)
+            }
         }
     }
-    
+
+    const { email, password } = values
+
+    const {
+        email: emailVal,
+        password: passwordVal,
+    } = validations
+
     const commonRoute = () => {
         return (
             <>
@@ -157,17 +228,29 @@ function LogIn() {
                                             <Typography style={{ marginBottom: "0px", fontFamily: "Bai Jamjuree", fontSize: "24px", fontWeight: "bold" }}>Login</Typography>
                                         </Grid>
 
-                                        <StyledTextField onBlur={emailBlurHandler} onChange={emailChangeHandler} type="email" label="Username" id="username" variant='standard' fullWidth required sx={{ marginBottom: "10px" }} InputLabelProps={{
+                                        {/* <StyledTextField onBlur={emailBlurHandler} onChange={emailChangeHandler} type="email" label="Username" id="username" variant='standard' fullWidth required sx={{ marginBottom: "10px" }} InputLabelProps={{
                                             style: { color: Colors.black }
                                         }} inputRef={email} helperText={emailHasError && "Please enter valid Email-Id"} />
                                         <StyledTextField label="Password" id="password" variant='standard' type="password" fullWidth required InputLabelProps={{
                                             style: { color: Colors.black }
-                                        }} inputRef={password} />
+                                        }} inputRef={password} /> */}
+
+
+                                        <StyledTextField label="Email" id="email" value={email} onChange={pathHandler}
+                                            onBlur={validateOne} name="email" variant='standard' type="email" fullWidth required sx={{ marginBottom: "20px" }} InputLabelProps={{
+                                                style: { color: Colors.black }
+                                            }} helperText={emailVal} />
+
+                                        <StyledTextField label="Password" id="password" value={password} onBlur={validateOne} onChange={pathHandler} name="password" variant='standard' type="password" fullWidth required sx={{ marginBottom: "20px" }} InputLabelProps={{
+                                            style: { color: Colors.black }
+                                        }} helperText={passwordVal} />
+
+
                                         <Button size='large' variant="contained" type="submit" fullWidth color='secondary' sx={{ marginBottom: "10px", color: "black", marginTop: "20px", fontWeight: "bold" }}>Log In</Button>
 
                                         <Typography component="h3" style={{ fontFamily: "Bai Jamjuree", marginTop: "0px" }}>Forgot your password?
-                                        <NavLink to={'/resetPass'} style={{ textDecoration: "none", color: Colors.secondary }}> Click here</NavLink>
-                                    </Typography>
+                                            <NavLink to={'/resetPass'} style={{ textDecoration: "none", color: Colors.secondary }}> Click here</NavLink>
+                                        </Typography>
                                         <DividerRoot>
                                             <Divider><Chip label="Or" /></Divider>
                                         </DividerRoot>
@@ -179,7 +262,7 @@ function LogIn() {
                                     <Button size='large' variant="outlined" fullWidth color='secondary' sx={{ marginBottom: "20px", color: "black" }} startIcon={<EmailIcon style={{ fontSize: "24px" }} color='secondary' />}>Continue With Email</Button>
 
                                     <Button onClick={handleGoogleSignIn} size='large' variant="outlined" fullWidth color='secondary' sx={{ color: "black", marginBottom: "20px" }} startIcon={<svg width="40" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.87566 13.2946L4.10987 16.1534L1.31093 16.2126C0.474461 14.6611 0 12.886 0 10.9997C0 9.17565 0.443609 7.45552 1.22994 5.94092H1.23054L3.72238 6.39776L4.81396 8.87465C4.5855 9.54071 4.46097 10.2557 4.46097 10.9997C4.46106 11.8072 4.60732 12.5808 4.87566 13.2946Z" fill="#FBBB00"></path><path d="M21.8082 8.94507C21.9345 9.61048 22.0004 10.2977 22.0004 11C22.0004 11.7875 21.9176 12.5557 21.7598 13.2967C21.2243 15.8183 19.8252 18.0201 17.8869 19.5782L17.8863 19.5776L14.7477 19.4175L14.3035 16.6445C15.5896 15.8902 16.5947 14.7098 17.1242 13.2967H11.2422V8.94507H17.21H21.8082Z" fill="#518EF8"></path><path d="M17.8865 19.5778L17.8871 19.5784C16.002 21.0937 13.6073 22.0002 11.0006 22.0002C6.81152 22.0002 3.16945 19.6588 1.31152 16.2132L4.87625 13.2952C5.8052 15.7744 8.19679 17.5392 11.0006 17.5392C12.2057 17.5392 13.3348 17.2134 14.3036 16.6447L17.8865 19.5778Z" fill="#28B446"></path><path d="M18.0208 2.53241L14.4573 5.44981C13.4546 4.82307 12.2694 4.46102 10.9996 4.46102C8.13229 4.46102 5.69596 6.30682 4.81356 8.87494L1.23009 5.9412H1.22949C3.06022 2.41154 6.74823 0 10.9996 0C13.6686 0 16.1158 0.950726 18.0208 2.53241Z" fill="#F14336"></path></svg>} >Continue With Google</Button>
-                                    
+
                                 </LoginPaper>
                             </TabPanel>
                             <TabPanel value={value} index={1}>

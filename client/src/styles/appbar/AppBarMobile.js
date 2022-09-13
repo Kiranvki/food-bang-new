@@ -49,26 +49,30 @@ function AppBarMobile({ matches }) {
         setDrawerOpen(!drawerOpen);
     };
 
+    const drawerClose = () => {
+        setDrawerOpen(false)
+    }
+
     const AppMobileDrawer = (
         <Box component="div">
             <List>
-                <ListItemButton>
-                    <ListItemText color='white'><NavLink to={"/home"} style={{ color: "white", textDecoration: "none" }}>Home</NavLink></ListItemText>
-                </ListItemButton>
+                <ListItemButton onClick={drawerClose}>
+                    <ListItemText ><NavLink to={"/home"} style={{ color: "white", textDecoration: "none" }}>Home</NavLink></ListItemText>
+                </ListItemButton >
                 <Divider variant='middle' />
-                <ListItemButton>
+                <ListItemButton onClick={drawerClose}>
                     <ListItemText><NavLink to={"/about"} style={{ color: "white", textDecoration: "none" }}>About</NavLink></ListItemText>
                 </ListItemButton>
                 <Divider variant='middle' />
-                <ListItemButton>
+                <ListItemButton onClick={drawerClose}>
                     <ListItemText><NavLink to={"/menulist"} style={{ color: "white", textDecoration: "none" }}>Menu</NavLink></ListItemText>
                 </ListItemButton>
                 <Divider variant='middle' />
-                <ListItemButton>
+                <ListItemButton onClick={drawerClose}>
                     <ListItemText><NavLink to={"/login"} style={{ color: "white", textDecoration: "none" }}>Login</NavLink></ListItemText>
                 </ListItemButton>
                 <Divider variant='middle' />
-                <ListItemButton>
+                <ListItemButton onClick={drawerClose}>
                     <ListItemText><NavLink to={"/signup"} style={{ color: "white", textDecoration: "none" }}>SignUp</NavLink></ListItemText>
                 </ListItemButton>
             </List>
@@ -92,6 +96,9 @@ function AppBarMobile({ matches }) {
         }
     }
 
+    const dashNavigate = () => {
+        navigate('/admin/dashboard')
+    }
 
     const commonRoute = (props) => {
 
@@ -115,7 +122,7 @@ function AppBarMobile({ matches }) {
                             />
                         </IconButton>
                     </Link>
-                    <Link href="home" sx={{ textDecoration: "none", color: Colors.secondary,fontSize:"20px",marginY:"auto" }}>Food-Bang</Link>
+                    <Link href="home" sx={{ textDecoration: "none", color: Colors.secondary, fontSize: "20px", marginY: "auto" }}>Food-Bang</Link>
                 </AppBarHeader>
                 <Box>
                     <MyList type="row">
@@ -141,35 +148,43 @@ function AppBarMobile({ matches }) {
                             {/* {
                                     isAdmin ? <Button size='small' startIcon={<DashboardIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/admin/dashboard`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>AdminDashboard</NavLink></Button> : null
                                 } */}
-
-
                             {
                                 isAdmin ?
-                                    <MenuItem onClick={handleClose}>
-                                        <Button size='small' startIcon={<DashboardIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/admin/dashboard`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>AdminDashboard</NavLink></Button>
-                                    </MenuItem> : null
+                                    <NavLink to={`/admin/dashboard`} style={{ textDecoration: "none" }}>
+                                        <MenuItem onClick={handleClose} color="error">
+                                            <Button size='medium' startIcon={<DashboardIcon sx={{ color: Colors.secondary, fontSize: "25px" }} />} sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }}>AdminDashboard</Button>
+                                        </MenuItem></NavLink> : null
                             }
 
-                            <MenuItem onClick={handleClose}>
-                                <Button size='small' startIcon={<AccountCircleIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/profile`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Profile</NavLink></Button>
-                            </MenuItem>
+                            <NavLink to={`/profile`} style={{ textDecoration: "none" }}>
+                                <MenuItem onClick={handleClose}>
+                                    <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<AccountCircleIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Profile</Button>
+                                </MenuItem>
+                            </NavLink>
 
-                            <MenuItem onClick={handleClose}><Button size='small' startIcon={<ListAltIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/products`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Menu</NavLink></Button></MenuItem>
-
-
+                            <NavLink to={`/products`} style={{ textDecoration: "none" }}>
+                                <MenuItem onClick={handleClose}><Button sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} size='small' startIcon={<ListAltIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Menu</Button></MenuItem>
+                            </NavLink>
 
                             {
-                                isAdmin ? (<MenuItem onClick={handleClose}>
-                                    <Button size='small' startIcon={<GroupIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/users`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Users</NavLink></Button>
-                                </MenuItem>) : null
+                                isAdmin ? (
+                                    <NavLink to={`/users`} style={{ textDecoration: "none" }}>
+                                        <MenuItem onClick={handleClose}>
+                                            <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<GroupIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Users</Button>
+                                        </MenuItem>
+                                    </NavLink>) : null
                             }
 
-                            <MenuItem onClick={handleClose}>
-                                <Button size='small' startIcon={<CachedIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/orders`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Orders</NavLink></Button>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose}>
-                                <Button size='small' startIcon={<LogoutIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/`} onClick={logoutUser} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: Colors.secondary, fontWeight: "bold" }}>Logout</NavLink></Button>
-                            </MenuItem>
+                            <NavLink to={`/orders`} style={{ textDecoration: "none" }}>
+                                <MenuItem onClick={handleClose}>
+                                    <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<CachedIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Orders</Button>
+                                </MenuItem></NavLink>
+
+                            <NavLink to={`/`} onClick={logoutUser} style={{ textDecoration: "none" }}>
+                                <MenuItem onClick={handleClose}>
+                                    <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<LogoutIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Logout</Button>
+                                </MenuItem>
+                            </NavLink>
                         </Menu>
                         <Box>
                             {

@@ -8,8 +8,6 @@ import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedi
 import auth from '../src/Firebase/firebase'
 import { FirebaseError } from 'firebase/app';
 
-
-
 export const GlobalState = createContext();
 
 export default function DataProvider(props) {
@@ -42,7 +40,6 @@ export default function DataProvider(props) {
         // } catch (err) {
         //     console.log(err.message);
         // }
-
     }
 
     const data = {

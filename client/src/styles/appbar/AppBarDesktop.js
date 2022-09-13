@@ -28,8 +28,6 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import Badge from '@mui/material/Badge';
 
 
-
-
 function AppBarDesktop({ matches }) {
 
   const context = useContext(GlobalState);
@@ -111,36 +109,49 @@ function AppBarDesktop({ matches }) {
                 } */}
               {
                 isAdmin ?
-                  <MenuItem onClick={handleClose}>
-                    <Button size='small' startIcon={<DashboardIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/admin/dashboard`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>AdminDashboard</NavLink></Button>
-                  </MenuItem> : null
+                  <NavLink to={`/admin/dashboard`} style={{ textDecoration: "none" }}>
+                    <MenuItem onClick={handleClose}>
+                      <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<DashboardIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>AdminDashboard</Button>
+                    </MenuItem></NavLink> : null
               }
 
+              <NavLink to={`/profile`} style={{ textDecoration: "none" }}>
+                <MenuItem onClick={handleClose}>
+                  <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<AccountCircleIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Profile</Button>
+                </MenuItem>
+              </NavLink>
 
-              <MenuItem onClick={handleClose}>
-                <Button size='small' startIcon={<AccountCircleIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/profile`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Profile</NavLink></Button>
-              </MenuItem>
-
-              <MenuItem onClick={handleClose}><Button size='small' startIcon={<ListAltIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/products`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Menu</NavLink></Button></MenuItem>
+              <NavLink to={`/products`} style={{ textDecoration: "none" }}>
+                <MenuItem onClick={handleClose}><Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<ListAltIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Menu</Button></MenuItem>
+              </NavLink>
 
               {
-                isAdmin ? (<MenuItem onClick={handleClose}>
-                  <Button size='small' startIcon={<GroupIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/users`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Users</NavLink></Button>
-                </MenuItem>) : null
+                isAdmin ? (<NavLink to={`/users`} style={{ textDecoration: "none" }}>
+                  <MenuItem onClick={handleClose}>
+                    <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<GroupIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Users</Button>
+                  </MenuItem>
+                </NavLink>) : null
               }
 
               {
                 isAdmin ?
-                  (<MenuItem onClick={handleClose}>
-                    <Button size='small' startIcon={<CachedIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/admin/allOrders`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Orders</NavLink></Button>
-                  </MenuItem>) : (<MenuItem onClick={handleClose}>
-                    <Button size='small' startIcon={<CachedIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/orders`} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: "black", fontWeight: "bold" }}>Orders</NavLink></Button>
-                  </MenuItem>)
+                  (
+                    <NavLink to={`/admin/allOrders`} style={{ textDecoration: "none" }}>
+                      <MenuItem onClick={handleClose}>
+                        <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<CachedIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Orders</Button>
+                      </MenuItem>
+                    </NavLink>) : (
+                    <NavLink to={`/orders`} style={{ textDecoration: "none" }}>
+                      <MenuItem onClick={handleClose}>
+                        <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<CachedIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Orders</Button>
+                      </MenuItem>
+                    </NavLink>)
               }
-
-              <MenuItem onClick={handleClose}>
-                <Button size='small' startIcon={<LogoutIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}><NavLink to={`/`} onClick={logoutUser} style={{ textDecoration: "none", textTransform: "capitalize", fontSize: "15px", color: Colors.secondary, fontWeight: "bold" }}>Logout</NavLink></Button>
-              </MenuItem>
+              <NavLink to={`/`} onClick={logoutUser} style={{ textDecoration: "none" }}>
+                <MenuItem onClick={handleClose}>
+                  <Button size='small' sx={{ color: "black", textTransform: "capitalize", my: 'auto', fontSize: "15px", fontWeight: "bold" }} startIcon={<LogoutIcon style={{ color: Colors.secondary, fontSize: "25px" }} />}>Logout</Button>
+                </MenuItem>
+              </NavLink>
             </Menu>
             <Box>
 

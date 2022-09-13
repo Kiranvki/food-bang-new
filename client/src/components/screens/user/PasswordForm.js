@@ -10,92 +10,144 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function PasswordForm() {
-
-    const otp = useRef();
-    const password = useRef();
-    const cpassword = useRef();
-
-
+function PasswordForm(props) {
 
     const navigate = useNavigate();
-    const PassRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    const [otpForm, setOtpForm] = useState(true)
+    const [inputField, setInputField] = useState({
+        password: '',
+        otpCode: '',
+        cpassword: ''
+    })
+
+    const [validations, setValidations] = useState({
+        password: '',
+        cpassword: '',
+
+    })
+
+    const validateAll = () => {
+        const { password, cpassword } = inputField
+        const validations = { password: '', cpassword: '' }
+        let isValid = true
 
 
-    const isPass = value => PassRegex.test(value);
+        if (!password) {
+            validations.password = 'Password is required'
+            isValid = false
+        }
 
+        if (password && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+            validations.password = 'Minimum eight characters, at least one letter and one number'
+            isValid = false
+        }
 
-    const {
-        value: enteredPwd,
-        isValid: pwdIsValid,
-        hasError: pwdHasError,
-        valueChangeHandler: pwdChangeHandler,
-        valueBlurHandler: pwdBlurHandler,
-    } = useInput(isPass);
+        if (!cpassword) {
+            validations.cpassword = 'Confirm Password is required'
+            isValid = false
+        }
 
-    const {
-        value: centeredPwd,
-        isValid: cpwdIsValid,
-        hasError: cpwdHasError,
-        valueChangeHandler: cpwdChangeHandler,
-        valueBlurHandler: cpwdBlurHandler,
-    } = useInput(isPass);
+        if (password && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(cpassword)) {
+            validations.cpassword = 'Minimum eight characters, at least one letter and one number'
+            isValid = false
+        }
 
+        if (!isValid) {
+            setValidations(validations)
+        }
+        return isValid
+    }
+
+    const validateOne = (e) => {
+        const { name } = e.target
+        const value = inputField[name]
+        let message = ''
+
+        if ((value && name === 'password' && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value))) {
+            message = 'Minimum eight characters, at least one letter and one number'
+
+        }
+        if ((value && name === 'cpassword' && inputField.cpassword !== inputField.password)) {
+            message = 'Password is not matching'
+
+        }
+        setValidations({ ...validations, [name]: message })
+    }
+
+    const inputHandler = (e) => {
+        setInputField({ ...inputField, [e.target.name]: e.target.value })
+    }
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        pwdBlurHandler(true);
-        cpwdBlurHandler(true)
+
+        const isValid = validateAll()
+
+        if (!isValid) {
+            return false
+        }
+
+        Object.assign(inputField, props)
 
         const user = {
-            otp: otp.current.value,
-            password: password.current.value,
-            cpassword: cpassword.current.value
+            password: inputField.password,
+            cpassword: inputField.cpassword
         }
 
-        console.log(user);
-
-        if (!pwdIsValid) {
-            return 'Password is not valid'
-        }
-
-        if (user.otp !== '' || user.password !== '' || user.cpassword !== "") {
+        if ( user.password === user.cpassword) {
             try {
-                await axios.post(`/api/v1/auth/resetPassword`, user).then(res => {
-                    toast.success("Password has been changed successfully")
+                let url = 'http://localhost:5000/api/v1/auth/resetPassword'
+                let options = {
+                    method: 'PATCH',
+                    url: url,
+                    data: inputField
+                }
+                await axios(options).then(res => {
+                    setOtpForm(false)
+                    toast.success('Password has been changed successfully');
                     navigate("/login")
-                })
-            } catch (error) {
-                toast.error(error.response.data.msg)
+                }).catch(err => toast.error(err.response.data.msg))
+            } catch (err) {
+                toast.error(err.response.data.msg)
             }
         }
     }
 
+    const { password, cpassword } = inputField
+
+    const {
+        password: passwordVal,
+        cpassword: cpasswordVal,
+
+    } = validations
 
     return (
         <Stack>
             <Container>
                 <LoginPaper elevation={10}>
-                    <Box component="form" autoComplete='on' onSubmit={submitHandler} noValidate id='otpForm'>
+                    <Box component="form" autoComplete='on' noValidate id='otpForm'>
                         <Grid item align="center">
                             <Avatar sx={{ bgcolor: Colors.secondary, marginBottom: "10px" }} display="" src='https://res.cloudinary.com/dkz3uzlnp/image/upload/v1662530612/food-bang/18-autorenew-outline_upbalo.gif'></Avatar>
                             <Typography style={{ marginBottom: "0px", fontFamily: "Bai Jamjuree", fontSize: "24px", fontWeight: "bold" }}>Reset Your Password</Typography>
                         </Grid>
-                        <StyledTextField type="number" label="Enter Your OTP" id="otp" variant='standard' fullWidth required sx={{ marginBottom: "10px" }} InputLabelProps={{
-                            style: { color: Colors.black }
-                        }} inputRef={otp} />
 
-                        <StyledTextField label="Password" id="password" value={enteredPwd} onBlur={pwdBlurHandler} onChange={pwdChangeHandler} name="password" inputRef={password} variant='standard' type="password" fullWidth required sx={{ marginBottom: "20px" }} InputLabelProps={{
-                            style: { color: Colors.black }
-                        }} helperText={pwdHasError && "Minimum eight characters, at least one letter and one number"} />
 
-                        <StyledTextField label="Confirm Your Password" id="cpassword" value={centeredPwd} onBlur={cpwdBlurHandler} onChange={cpwdChangeHandler} name="cpassword" inputRef={cpassword} variant='standard' type="password" fullWidth required sx={{ marginBottom: "20px" }} InputLabelProps={{
+                        <StyledTextField type="text" label="Enter Your OTP" name='otpCode' value={inputField.otpCode} id="otp" onChange={inputHandler} variant='standard' fullWidth required sx={{ marginBottom: "10px" }} InputLabelProps={{
                             style: { color: Colors.black }
-                        }} helperText={pwdHasError && "Entered Password is not matching"} />
+                        }} />
 
+                        <StyledTextField label="Password" id="password" value={inputField.password} onChange={inputHandler} name="password" variant='standard' onBlur={validateOne} type="password" fullWidth required sx={{ marginBottom: "20px" }} InputLabelProps={{
+                            style: { color: Colors.black }
+                        }} helperText={passwordVal} />
+
+                        <StyledTextField label="Confirm Your Password" id="cpassword" value={inputField.cpassword} onChange={inputHandler} onBlur={validateOne} name="cpassword" variant='standard' type="password" fullWidth required sx={{ marginBottom: "20px" }} InputLabelProps={{
+                            style: { color: Colors.black }
+                        }} helperText={cpasswordVal} />
 
                         <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flexStart" }}>
-                            <Button size='medium' variant="contained" type="submit" color='secondary' sx={{ margin: "20px 20px 10px 0px", color: "black", fontWeight: "bold" }}>Change Password</Button>
+                            <Button size='medium' variant="contained" type="submit" color='secondary' onClick={submitHandler} sx={{ margin: "20px 20px 10px 0px", color: "black", fontWeight: "bold" }}>Change Password</Button>
+
                             <NavLink to={"/login"} style={{ textDecoration: "none" }}><Button size='medium' variant="contained" type="submit" fullWidth color='error' sx={{ marginBottom: "10px", color: "white", marginTop: "20px", fontWeight: "bold" }}>Back</Button></NavLink>
                         </Box>
                     </Box>

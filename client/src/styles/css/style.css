@@ -25,11 +25,11 @@ body{
     animation: imgRotate 50s infinite;
 }
 
-/* @keyframes imgRotate {
+@keyframes imgRotate {
     100%{
         transform:rotate(360deg)
     }
-}  */
+} 
 .active {
     color: rgba(250, 126, 30, 0.7);
 }
