@@ -43,7 +43,7 @@ function About() {
                 <Grid container sx={{ padding: "5px 30px 5px 30px " }} spacing={3}>
                     <Grid item md={6} sm={12} xm={12} lg={6}>
                         <CommonHeader className='underbar'>
-                            Who are we?
+                            Who are we? we are
                         </CommonHeader>
                         <CommonDescription color="text.secondary" mt={3}>
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed dolorem eius consectetur, minus distinctio vitae magnam facilis odio perspiciatis iusto consequuntur assumenda perferendis saepe aut ullam nam veniam. Delectus, saepe? Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat, facere itaque corporis consequuntur odit consequatur veritatis necessitatibus quas, alias repudiandae corrupti cumque, ducimus voluptatem velit enim sunt dicta. Fugit, laudantium? Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iusto, itaque perspiciatis assumenda, eos hic perferendis iste laboriosam beatae, ullam odit quo neque placeat explicabo fuga quod excepturi commodi consectetur. Natus!
